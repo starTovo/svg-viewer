@@ -52,6 +52,17 @@ GEN="$ROOT/gen"
 BUILD="$ROOT/build"
 OUT="$ROOT/out"
 
+# Single source of truth for the UI lives at repo-root app/index.html.
+# src/assets/index.html is a build input only -- it is gitignored and always
+# refreshed here, so the two can never drift apart.
+APP_HTML="$(wp "$ROOT/../app/index.html")"
+if [ -f "$APP_HTML" ]; then
+  mkdir -p "$SRC_ASSETS"
+  cp "$APP_HTML" "$SRC_ASSETS/index.html"
+else
+  printf 'warning: %s not found, using existing src/assets/index.html\n' "$APP_HTML" >&2
+fi
+
 log() { printf '\n\033[36m==> %s\033[0m\n' "$1"; }
 
 # ---------------------------------------------------------------------------

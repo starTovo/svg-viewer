@@ -43,6 +43,21 @@ qa-shots/
 # 生成的走查台快照（node make-review.cjs 重新生成）
 ui-review.html
 
+# src/assets/index.html 是 app/index.html 的构建副本，由 build.sh 每次自动同步。
+# 不入库，避免出现两份会各自漂移的"真源"。
+android/src/assets/index.html
+
+# 验证输出 / 一次性调试脚本（不是源码，也不是文档）
+app/qa-out*.txt
+app/qa-results.json
+app/qa-v5-results.json
+app/lock.txt
+app/pinch-before.json
+app/pinch-after.json
+qa/*.py
+qa/*.err
+qa/*.svg
+
 # 本地工具状态
 .workbuddy/*
 !.workbuddy/memory/
