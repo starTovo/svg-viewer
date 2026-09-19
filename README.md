@@ -20,9 +20,9 @@ app/
   qa-pinch.cjs      手势抖动量化探针
 android/
   build.sh          一键打包（无 Android SDK 路线）
-  setup-tools.sh    重新下载构建工具链（_tools/ 不入库）
+  setup-tools.sh    重新下载构建工具链（_local/ 不入库）
   src/              原生源码：Manifest / res / Java
-  _tools/           构建工具（gitignored，见 setup-tools.sh）
+  _local/           本地专属（gitignored，见 setup-tools.sh）
   out/              产物 APK（gitignored）
 make-review.cjs     生成双设备走查台
 安装说明.md         面向用户的安装与使用说明
@@ -58,9 +58,9 @@ bash build.sh             # 出包到 android/out/
 
 ```bash
 cd app
-npm --prefix ../qa i      # 首次：装 playwright-core
-NODE_PATH=../qa/node_modules node qa.cjs
-NODE_PATH=../qa/node_modules node qa-v5.cjs
+npm --prefix ../_local/qa i      # 首次：装 playwright-core
+NODE_PATH=../_local/qa/node_modules node qa.cjs
+NODE_PATH=../_local/qa/node_modules node qa-v5.cjs
 ```
 
 ---
@@ -88,7 +88,7 @@ NODE_PATH=../qa/node_modules node qa-v5.cjs
 
 ## ⚠️ 签名密钥
 
-`android/_tools/svgview.keystore`（alias `svgview`）**不在 git 里**，但极其重要：
+`_local/tools/svgview.keystore`（alias `svgview`）**不在 git 里**，但极其重要：
 
 **丢了它，就无法给已安装用户推送覆盖更新** —— Android 拒绝用不同密钥签名的同名包覆盖安装，用户只能卸载重装并丢失数据。
 

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # ==========================================================================
-# Download the APK build toolchain into android/_tools/
+# Download the APK build toolchain into _local/tools/
 #
 # Why this exists: the toolchain is ~153MB (android.jar alone is 132MB), which
 # is both pointless to keep in git and over GitHub's 100MB per-file hard limit.
-# So _tools/ is gitignored and rebuilt on demand by this script.
+# So the whole _local/ folder is gitignored and rebuilt on demand by this
+# script. _local/ holds everything local-only: toolchain, test env, screenshots.
 #
 # Usage (git-bash):
 #   cd android && bash setup-tools.sh
@@ -14,7 +15,7 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TOOLS="$HERE/_tools"
+TOOLS="$HERE/../_local/tools"
 BIN="$TOOLS/bin"
 mkdir -p "$TOOLS" "$BIN"
 

@@ -2,12 +2,13 @@
 # ---------------------------------------------------------------------------
 # SVG 查看器 —— 无 Android SDK 的 APK 构建脚本
 #
-# 依赖（全部位于 _tools/ 下，无需 Android SDK / Gradle）：
-#   _tools/android.jar          API 34 编译桩（Robolectric android-all 14）
-#   _tools/r8.jar               内含 D8，用于 class -> dex
-#   _tools/bin/aapt2.exe        资源编译与链接
-#   _tools/uber-apk-signer.jar  对齐 + 签名
-#   _tools/svgview.keystore     自建签名库
+# 依赖（全部位于 _local/tools/ 下，无需 Android SDK / Gradle）：
+#   _local/tools/android.jar          API 34 编译桩（Robolectric android-all 14）
+#   _local/tools/r8.jar               内含 D8，用于 class -> dex
+#   _local/tools/bin/aapt2.exe        资源编译与链接
+#   _local/tools/uber-apk-signer.jar  对齐 + 签名
+#   _local/tools/svgview.keystore     自建签名库
+# 工具链不入库（153MB），缺失时运行：bash setup-tools.sh
 #
 # 用法：在 git-bash 中执行  bash build.sh
 # 产物：out/svgview-unsigned-signed.apk
@@ -30,7 +31,7 @@ JDK="C:/Program Files/Java/jdk-23/bin"
 JAVA="$JDK/java"
 JAVAC="$JDK/javac"
 
-TOOLS="$ROOT/_tools"
+TOOLS="$ROOT/../_local/tools"
 ANDROID_JAR="$(wp "$TOOLS/android.jar")"
 R8_JAR="$(wp "$TOOLS/r8.jar")"
 AAPT2="$(wp "$TOOLS/bin/aapt2.exe")"

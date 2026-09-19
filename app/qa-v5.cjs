@@ -7,14 +7,14 @@
  *            double-tap suppression, fit centring not regressed)
  *
  * Real browser: playwright-core + local Chrome.
- * Run: NODE_PATH=E:/svg_view/qa/node_modules node E:/svg_view/app/qa-v5.cjs
+ * Run: NODE_PATH=E:/svg_view/_local/qa/node_modules node E:/svg_view/app/qa-v5.cjs
  */
 const { chromium } = require('playwright-core');
 const fs = require('fs');
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const URL_ = 'file:///E:/svg_view/app/index.html';
-const SHOTS = 'E:/svg_view/app/shots';
+const SHOTS = 'E:/svg_view/_local/shots/app';
 fs.mkdirSync(SHOTS, { recursive: true });
 
 const results = [];
