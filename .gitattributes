@@ -1,0 +1,17 @@
+# Normalize line endings: LF in the repo, native on checkout.
+* text=auto eol=lf
+
+# Windows batch files MUST keep CRLF or cmd.exe mis-parses them.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell scripts must stay LF.
+*.sh text eol=lf
+
+# Binary — never touch, never diff.
+*.png  binary
+*.jar  binary
+*.apk  binary
+*.dex  binary
+*.keystore binary
+*.idsig binary

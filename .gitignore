@@ -1,0 +1,58 @@
+# ==========================================================================
+# Build toolchain — 153MB，且 android.jar(132MB) 超过 GitHub 单文件 100MB 硬上限
+# 不要提交！用 android/setup-tools.sh 重新下载即可
+# ==========================================================================
+android/_tools/
+
+# 构建产物
+android/build/
+android/out/
+android/gen/
+android/.home/
+android/.verify/
+android/.v/
+**/*.class
+**/*.dex
+**/*.apk
+**/*.idsig
+
+# 签名密钥（绝不入库，务必另行备份）
+*.keystore
+*.jks
+
+# 测试环境（可 npm 恢复）
+qa/node_modules/
+qa/.npm-cache/
+qa/.chrome-profile*/
+qa/.cprofile/
+
+# 历史一次性调试脚本 / 报告产物（app/ 下的才是现行脚本）
+qa/*.cjs
+qa/*.js
+qa/*.json
+qa/*.sh
+qa/*.ps1
+qa/*.txt
+qa/__pycache__/
+
+# 截图（可由验证脚本重新生成）
+app/shots/
+qa-shots/
+*.png
+
+# 生成的走查台快照（node make-review.cjs 重新生成）
+ui-review.html
+
+# 本地工具状态
+.workbuddy/*
+!.workbuddy/memory/
+!.workbuddy/memory/**
+
+# 临时 / 调试残留
+enc2.txt
+enc.json
+enc.txt
+*.tmp
+*.log
+.DS_Store
+Thumbs.db

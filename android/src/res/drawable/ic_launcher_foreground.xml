@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自适应图标前景：一个放大镜，代表"查看器"。视口 108dp，安全区 72dp 居中。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 镜圈：evenOdd 双圆挖空成环 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M46,44 m-18,0 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0 M46,44 m-11,0 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0" />
+
+    <!-- 镜柄 -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:pathData="M59,57 L73,71" />
+</vector>
