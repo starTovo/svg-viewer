@@ -14,7 +14,7 @@
 
 手机与平板的**真实可交互界面**（不是截图，能点能缩放能改代码）：
 
-👉 **https://starTovo.github.io/&lt;仓库名&gt;/**（建好仓库并把 `仓库名` 替换进去即可）
+👉 **https://starTovo.github.io/svg-viewer/**
 
 ---
 
@@ -52,24 +52,36 @@
 
 ## 项目结构
 
+**本仓库只包含 App 自身的内容**，本机专属的东西（构建工具链、测试环境、截图、旧版文件、AI 对话记忆）全部放在仓库**外面**，不会同步到这里：
+
 ```
-app/
-  index.html        主界面 —— 整个 App 的 UI，单文件零依赖
-  qa.cjs            回归验证（100 项）
-  qa-v5.cjs         1.2.0 新增功能验证（21 项）
-  qa-pinch.cjs      手势抖动量化探针
-android/
-  build.sh          一键打包（无 Android SDK 路线）
-  setup-tools.sh    重新下载构建工具链
-  src/              原生源码：Manifest / res / Java
-docs/
-  index.html        GitHub Pages 展示页（由 make-pages.cjs 生成）
-make-review.cjs     生成双设备走查台（本地开发用）
-make-pages.cjs      生成 Pages 展示页
+E:/svg_view/                 工作区（不是仓库）
+├── repo/                    ← 就是本仓库，只放 App 内容
+│   ├── app/
+│   │     index.html           主界面 —— 整个 App 的 UI，单文件零依赖
+│   │     qa.cjs               回归验证（100 项）
+│   │     qa-v5.cjs            1.2.0 新增功能验证（21 项）
+│   │     qa-pinch.cjs         手势抖动量化探针
+│   ├── android/
+│   │     build.sh             一键打包（无 Android SDK 路线）
+│   │     setup-tools.sh       重新下载构建工具链
+│   │     src/                 原生源码：Manifest / res / Java
+│   ├── docs/
+│   │     index.html           GitHub Pages 展示页（由 make-pages.cjs 生成）
+│   ├── make-review.cjs        生成双设备走查台
+│   └── make-pages.cjs         生成 Pages 展示页
+│
+├── .workbuddy/              AI 对话记忆与会话状态（本机专属）
+└── _local/                  本机专属，全部不入库
+      tools/                   构建工具链 ~157MB（android.jar 单个就 132MB）
+      qa/                      验证脚本的 node_modules
+      shots/                   验证截图
+      ui-review.html           走查台快照
+      legacy/                  早期网页版 MVP、v1.0 的 QA 报告与交付总览
 ```
 
-> `_local/`（构建工具链 157MB、测试环境、截图）**不入库**，换机器用
-> `android/setup-tools.sh` 和 `npm i` 重建。
+> 换机器时，`_local/` 用 `android/setup-tools.sh` 与 `npm i` 重建即可；
+> 唯一必须**手工备份**的是 `_local/tools/`（签名密钥 + 口令，见文末）。
 
 ---
 
@@ -77,7 +89,7 @@ make-pages.cjs      生成 Pages 展示页
 
 ```bash
 # 预览界面（改界面时用，手机+平板并排可交互）
-node make-review.cjs        # 生成 ui-review.html，浏览器打开
+node make-review.cjs        # 生成 ../_local/ui-review.html，浏览器打开
 
 # 打包 APK
 cd android
@@ -86,15 +98,15 @@ bash build.sh               # 出包到 android/out/
 
 # 跑验证
 cd app
-npm --prefix ../_local/qa i
-NODE_PATH=../_local/qa/node_modules node qa.cjs
-NODE_PATH=../_local/qa/node_modules node qa-v5.cjs
+npm --prefix ../../_local/qa i
+NODE_PATH=../../_local/qa/node_modules node qa.cjs
+NODE_PATH=../../_local/qa/node_modules node qa-v5.cjs
 
 # 更新 GitHub Pages 展示页
 node make-pages.cjs         # 生成 docs/index.html
 ```
 
-> ⚠️ `ui-review.html` 和 `docs/index.html` 都是**内嵌快照**，
+> ⚠️ `_local/ui-review.html` 和 `docs/index.html` 都是**内嵌快照**，
 > 改完 `app/index.html` 必须重新生成，否则看到的是旧界面。
 
 改界面只需替换 `android/src/assets/index.html`（`build.sh` 会自动从 `app/index.html` 同步），**不需要动 Java**。
@@ -156,11 +168,18 @@ node make-pages.cjs         # 生成 docs/index.html
 
 ## ⚠️ 签名密钥
 
-`_local/tools/svgview.keystore`（alias `svgview`）**不在 git 里**，但极其重要：
+签名相关的两个文件都在仓库外，**不在 git 里**，但极其重要：
 
-**丢了它，就无法给已安装用户推送覆盖更新** —— Android 拒绝用不同密钥签名的同名包覆盖安装，用户只能卸载重装并丢失数据。
+| 文件 | 说明 |
+|---|---|
+| `_local/tools/svgview.keystore` | 签名私钥，alias `svgview` |
+| `_local/tools/keystore.properties` | 密钥库口令（构建脚本从这里读，不硬编码在仓库里） |
+
+**丢了其中任何一个，都无法给已安装用户推送覆盖更新** —— Android 拒绝用不同密钥签名的同名包覆盖安装，用户只能卸载重装并丢失数据。
 
 请自行备份到安全的地方（网盘 / U 盘）。
+
+> 构建脚本按 `$SVGVIEW_KS_PASS` → `keystore.properties` 的顺序读取口令，都取不到就报错退出。
 
 ---
 

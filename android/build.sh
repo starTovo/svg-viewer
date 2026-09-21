@@ -32,7 +32,7 @@ JDK="C:/Program Files/Java/jdk-23/bin"
 JAVA="$JDK/java"
 JAVAC="$JDK/javac"
 
-TOOLS="$ROOT/../_local/tools"
+TOOLS="$ROOT/../../_local/tools"
 ANDROID_JAR="$(wp "$TOOLS/android.jar")"
 R8_JAR="$(wp "$TOOLS/r8.jar")"
 AAPT2="$(wp "$TOOLS/bin/aapt2.exe")"

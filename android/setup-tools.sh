@@ -15,7 +15,7 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TOOLS="$HERE/../_local/tools"
+TOOLS="$HERE/../../_local/tools"
 BIN="$TOOLS/bin"
 mkdir -p "$TOOLS" "$BIN"
 

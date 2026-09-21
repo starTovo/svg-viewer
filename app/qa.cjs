@@ -1,11 +1,11 @@
-/* QA harness - SVG Studio WebView app (E:/svg_view/app/index.html)
+/* QA harness - SVG Studio WebView app (E:/svg_view/repo/app/index.html)
  * Real browser verification: playwright-core + local Chrome.
  */
 const { chromium } = require('playwright-core');
 const fs = require('fs');
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const URL_ = 'file:///E:/svg_view/app/index.html';
+const URL_ = 'file:///E:/svg_view/repo/app/index.html';
 const SHOTS = 'E:/svg_view/_local/shots/app';
 fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -1513,7 +1513,7 @@ async function run() {
   if (warns.length) console.log(JSON.stringify(warns, null, 1));
   if (pageErrors.length) console.log(JSON.stringify(pageErrors, null, 1));
   console.log('FAILS: ' + JSON.stringify(results.filter(x => !x.pass), null, 1));
-  fs.writeFileSync('E:/svg_view/app/qa-results.json', JSON.stringify({ results, consoleMsgs, pageErrors }, null, 1));
+  fs.writeFileSync('E:/svg_view/repo/app/qa-results.json', JSON.stringify({ results, consoleMsgs, pageErrors }, null, 1));
 }
 
 run().catch(e => { console.error('HARNESS ERROR', e); process.exit(1); });

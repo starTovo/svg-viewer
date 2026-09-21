@@ -8,12 +8,12 @@
  * iframes become same-origin with the parent (so we can call window.SvgApp
  * inside them, e.g. to replay the onboarding tour).
  *
- * Usage: node make-review.cjs   (run from E:/svg_view)
+ * Usage: node make-review.cjs   (run from E:/svg_view/repo)
  */
 const fs = require('fs');
 
 const APP = 'app/index.html';
-const OUT = 'ui-review.html';
+const OUT = '../_local/ui-review.html';
 
 let app = fs.readFileSync(APP, 'utf8');
 
