@@ -165,7 +165,7 @@ const html = `<!DOCTYPE html>
     </p>
     <p>
       界面版本 <span id="fv"></span> · 源码见
-      <a href="https://github.com/" target="_blank" rel="noopener">GitHub 仓库</a>
+      <a href="https://github.com/starTovo/svg-viewer" target="_blank" rel="noopener">GitHub 仓库</a>
     </p>
   </footer>
 

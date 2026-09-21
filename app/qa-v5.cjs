@@ -14,7 +14,8 @@ const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
-const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+const CHROME = process.env.SVGVIEW_CHROME
+  || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const URL_ = pathToFileURL(path.join(__dirname, 'index.html')).href;
 const SHOTS = process.env.SVGVIEW_SHOTS || path.join(__dirname, 'shots');
 const OUT_DIR = process.env.SVGVIEW_OUT || __dirname;

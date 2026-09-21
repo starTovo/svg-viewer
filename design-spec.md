@@ -111,7 +111,7 @@ SVG Studio
 
 ---
 
-## 5. 设计 Token（节选，完整见 `design-system/tokens/tokens.css`）
+## 5. 设计 Token（节选）
 
 ```css
 /* 浅色 */
