@@ -90,7 +90,7 @@ cd .. && node make-pages.cjs
 > 也可以用环境变量 `SVGVIEW_TOOLS` 指向已有的工具链目录。
 > 验证脚本的截图与结果默认写到 `app/shots/` 与 `app/`，可用 `SVGVIEW_SHOTS` / `SVGVIEW_OUT` 覆盖。
 
-改界面只需替换 `android/src/assets/index.html`（`build.sh` 会自动从 `app/index.html` 同步），**不需要动 Java**。
+改界面只需编辑 `app/index.html`，`build.sh` 会自动同步到打包目录，**不需要动 Java**。
 
 > ⚠️ 走查台与 `docs/index.html` 都是**内嵌快照**，改完 `app/index.html` 必须重新生成，否则看到的是旧界面。
 
