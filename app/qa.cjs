@@ -1502,7 +1502,7 @@ async function run() {
 
   // version bump (v5: aligned with the APK manifest versionName)
   r = await page.evaluate(() => window.SvgApp.version);
-  rec('X17', 'SvgApp.version is 1.2.0', r === '1.2.0', String(r));
+  rec('X17', 'SvgApp.version is 1.2.1', r === '1.2.1', String(r));
   await ctx.close();
 
   await browser.close();

@@ -3,6 +3,7 @@ package com.svgview.app;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,8 +63,10 @@ public class MainActivity extends Activity {
 
         webView = (WebView) findViewById(R.id.webview);
 
-        // 调试期开启远程调试，正式发行可置 false
-        WebView.setWebContentsDebuggingEnabled(true);
+        // 只在可调试构建里开远程调试。发行包 manifest 不含 android:debuggable，
+        // FLAG_DEBUGGABLE 为 0，自动关闭。本项目无 Gradle，故不用 BuildConfig.DEBUG。
+        boolean debuggable = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        WebView.setWebContentsDebuggingEnabled(debuggable);
 
         configureSettings(webView.getSettings());
         configureClient(webView);

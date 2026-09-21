@@ -6,7 +6,7 @@
 <p>
   <img alt="单文件" src="https://img.shields.io/badge/单文件-零依赖-blue">
   <img alt="Android" src="https://img.shields.io/badge/Android-8.0%2B-green">
-  <img alt="版本" src="https://img.shields.io/badge/版本-1.2.0-orange">
+  <img alt="版本" src="https://img.shields.io/badge/版本-1.2.1-orange">
   <img alt="AI 辅助" src="https://img.shields.io/badge/AI-辅助开发-purple">
 </p>
 

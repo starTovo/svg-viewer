@@ -2,7 +2,7 @@
  *
  *   E1..E7   export path wired to the native host (3 branches:
  *            host present / pure web / host reports failure)
- *   V1..V3   version is 1.2.0 and prefers the host manifest value
+ *   V1..V3   version is 1.2.1 and prefers the host manifest value
  *   P1..P4   pinch no longer twitches (jitter trajectory, 2->1 handover,
  *            double-tap suppression, fit centring not regressed)
  *
@@ -74,7 +74,7 @@ async function run() {
        shell and the page must treat them as the same host. */
     window.Android = {
       toast: function (m) { window.__n.calls.push(['toast', String(m)]); },
-      getAppVersion: function () { return '1.2.0'; },
+      getAppVersion: function () { return '1.2.1'; },
       getExportDir: function (t) { window.__n.calls.push(['getExportDir', t]); return window.__n.dirs[t] || ''; },
       setExportDir: function (t, p) { window.__n.dirs[t] = p; return p; },
       pickExportDir: function (t) { window.__n.calls.push(['pickExportDir', t]); }
@@ -100,7 +100,7 @@ async function run() {
     JSON.stringify(r));
   rec('E2', 'host present -> the "not supported" warning is gone',
     !/尚不支持/.test(r.note) && r.tone === null, r.note);
-  rec('V1', 'about version prefers the host manifest value', r.ver === '1.2.0', r.ver);
+  rec('V1', 'about version prefers the host manifest value', r.ver === '1.2.1', r.ver);
 
   // 修改 -> system folder picker, not the inline field
   await page.click('#editSvgBtn');
@@ -199,7 +199,7 @@ async function run() {
   rec('E8', 'pure web: honest degrade note kept, amber tone, host=web',
     r.host === 'web' && /尚不支持自定义路径/.test(r.note) && r.tone === 'warn',
     JSON.stringify(r));
-  rec('V2', 'pure web: about falls back to SvgApp.version 1.2.0', r.ver === '1.2.0', r.ver);
+  rec('V2', 'pure web: about falls back to SvgApp.version 1.2.1', r.ver === '1.2.1', r.ver);
 
   await page.click('#editSvgBtn');
   await page.waitForTimeout(200);
@@ -409,8 +409,8 @@ async function run() {
   await page.click('#btnTheme');
   await page.waitForTimeout(350);
   await page.screenshot({ path: SHOTS + '/v5-04-phone-dark.png' });
-  rec('V3', 'SvgApp.version constant is 1.2.0',
-    await page.evaluate(() => window.SvgApp.version) === '1.2.0',
+  rec('V3', 'SvgApp.version constant is 1.2.1',
+    await page.evaluate(() => window.SvgApp.version) === '1.2.1',
     await page.evaluate(() => window.SvgApp.version));
   await ctx.close();
 
@@ -437,8 +437,8 @@ async function run() {
     note: document.getElementById('pathNote').textContent,
     tone: document.getElementById('pathNote').getAttribute('data-tone')
   }));
-  rec('E10', 'tablet + no host: version 1.2.0, honest note intact',
-    r.ver === '1.2.0' && /尚不支持自定义路径/.test(r.note) && r.tone === 'warn', JSON.stringify(r));
+  rec('E10', 'tablet + no host: version 1.2.1, honest note intact',
+    r.ver === '1.2.1' && /尚不支持自定义路径/.test(r.note) && r.tone === 'warn', JSON.stringify(r));
   await ctx.close();
 
   await browser.close();
