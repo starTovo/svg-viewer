@@ -8,12 +8,16 @@
  * iframes become same-origin with the parent (so we can call window.SvgApp
  * inside them, e.g. to replay the onboarding tour).
  *
- * Usage: node make-review.cjs   (run from E:/svg_view/repo)
+ * Usage: node make-review.cjs   (run from the repo root)
  */
 const fs = require('fs');
+const path = require('path');
 
 const APP = 'app/index.html';
-const OUT = '../_local/ui-review.html';
+
+/* Where the harness is written. Defaults to the repo root (ui-review.html is
+ * gitignored); set SVGVIEW_OUT to a directory to put it somewhere else. */
+const OUT = path.join(process.env.SVGVIEW_OUT || '.', 'ui-review.html');
 
 let app = fs.readFileSync(APP, 'utf8');
 

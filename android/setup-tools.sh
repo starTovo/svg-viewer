@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 # ==========================================================================
-# Download the APK build toolchain into _local/tools/
+# Download the APK build toolchain (aapt2 / r8 / android.jar / signer).
 #
-# Why this exists: the toolchain is ~153MB (android.jar alone is 132MB), which
-# is both pointless to keep in git and over GitHub's 100MB per-file hard limit.
-# So the whole _local/ folder is gitignored and rebuilt on demand by this
-# script. _local/ holds everything local-only: toolchain, test env, screenshots.
+# Why this exists: the toolchain is ~153MB (android.jar alone is 132MB), too
+# big to keep in git (and over GitHub's 100MB per-file hard limit), so it is
+# gitignored and rebuilt on demand by this script.
+#
+# The target directory is resolved in this order (first existing wins):
+#   1) $SVGVIEW_TOOLS                      explicit override
+#   2) <this script>/../../_local/tools    out-of-repo layout
+#   3) <this script>/../_local/tools
+#   4) <this script>/.tools                default landing spot (created if absent)
+# If none exists yet, it falls back to (4) and creates it.
 #
 # Usage (git-bash):
 #   cd android && bash setup-tools.sh
@@ -15,9 +21,28 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TOOLS="$HERE/../../_local/tools"
+
+# 工具链目录解析：按顺序取第一个存在的候选；都没有则落到 ./.tools 并创建
+resolve_tools() {
+  for cand in "${SVGVIEW_TOOLS:-}" \
+              "$HERE/../../_local/tools" \
+              "$HERE/../_local/tools" \
+              "$HERE/.tools"; do
+    if [ -n "$cand" ] && [ -d "$cand" ]; then
+      printf '%s\n' "$cand"
+      return 0
+    fi
+  done
+  return 1
+}
+
+TOOLS="$(resolve_tools || true)"
+if [ -z "$TOOLS" ]; then
+  TOOLS="$HERE/.tools"
+fi
 BIN="$TOOLS/bin"
 mkdir -p "$TOOLS" "$BIN"
+printf '\ntoolchain dir: %s\n' "$TOOLS"
 
 # Prefer these JDKs if present; otherwise fall back to whatever is on PATH.
 for cand in "C:/Program Files/Java/jdk-23" "C:/Program Files/Java/jdk-11.0.6"; do
@@ -73,7 +98,7 @@ download "https://repo1.maven.org/maven2/org/robolectric/android-all/14-robolect
 # who already installed the app (Android refuses to overwrite a package signed
 # with a different key). Back it up somewhere safe.
 say "signing keystore"
-# The store password lives in _local/tools/keystore.properties (never in git).
+# The store password lives in <toolchain dir>/keystore.properties (never in git).
 # If neither that file nor $SVGVIEW_KS_PASS supplies one, generate a random one.
 KS_PROPS="$TOOLS/keystore.properties"
 KS_PASS="${SVGVIEW_KS_PASS:-}"

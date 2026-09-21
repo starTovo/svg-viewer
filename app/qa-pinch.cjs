@@ -8,15 +8,18 @@
  *   - per-frame TRANSLATE jump (px) -- this is what "画面抽搐" looks like
  * Also checks the 2->1 handover and double-tap suppression.
  *
- * Run: NODE_PATH=E:/svg_view/_local/qa/node_modules node E:/svg_view/repo/app/qa-pinch.cjs <tag>
+ * Run: NODE_PATH=./node_modules node qa-pinch.cjs <tag>
  */
 const { chromium } = require('playwright-core');
 const fs = require('fs');
+const path = require('path');
+const { pathToFileURL } = require('url');
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const URL_ = 'file:///E:/svg_view/repo/app/index.html';
+const URL_ = pathToFileURL(path.join(__dirname, 'index.html')).href;
 const TAG = process.argv[2] || 'run';
-const OUT = 'E:/svg_view/repo/app/pinch-' + TAG + '.json';
+const OUT_DIR = process.env.SVGVIEW_OUT || __dirname;
+const OUT = path.join(OUT_DIR, 'pinch-' + TAG + '.json');
 
 async function run() {
   const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox', '--disable-gpu'] });

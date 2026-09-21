@@ -1,7 +1,7 @@
 # SVG Studio · 前端页面设计规格（MVP）
 
 > 目标设备：安卓手机（360–430px）为主，平板（768–1280px）次之
-> 设计系统：Lumen UI（`E:\uiux\ui素材`）—— 极简中性 / Linear 风
+> 设计系统：Lumen UI —— 极简中性 / Linear 风
 > 交付形态：`index.html` 单文件自包含，零外部依赖，可离线
 
 ---

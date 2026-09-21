@@ -52,64 +52,47 @@
 
 ## 项目结构
 
-**本仓库只包含 App 自身的内容**，本机专属的东西（构建工具链、测试环境、截图、旧版文件、AI 对话记忆）全部放在仓库**外面**，不会同步到这里：
-
 ```
-E:/svg_view/                 工作区（不是仓库）
-├── repo/                    ← 就是本仓库，只放 App 内容
-│   ├── app/
-│   │     index.html           主界面 —— 整个 App 的 UI，单文件零依赖
-│   │     qa.cjs               回归验证（100 项）
-│   │     qa-v5.cjs            1.2.0 新增功能验证（21 项）
-│   │     qa-pinch.cjs         手势抖动量化探针
-│   ├── android/
-│   │     build.sh             一键打包（无 Android SDK 路线）
-│   │     setup-tools.sh       重新下载构建工具链
-│   │     src/                 原生源码：Manifest / res / Java
-│   ├── docs/
-│   │     index.html           GitHub Pages 展示页（由 make-pages.cjs 生成）
-│   ├── make-review.cjs        生成双设备走查台
-│   └── make-pages.cjs         生成 Pages 展示页
-│
-├── .workbuddy/              AI 对话记忆与会话状态（本机专属）
-└── _local/                  本机专属，全部不入库
-      tools/                   构建工具链 ~157MB（android.jar 单个就 132MB）
-      qa/                      验证脚本的 node_modules
-      shots/                   验证截图
-      ui-review.html           走查台快照
-      legacy/                  早期网页版 MVP、v1.0 的 QA 报告与交付总览
+app/
+  index.html        主界面 —— 整个 App 的 UI，单文件零依赖
+  qa.cjs            回归验证（100 项）
+  qa-v5.cjs         1.2.0 新增功能验证（21 项）
+  qa-pinch.cjs      手势抖动量化探针
+android/
+  build.sh          一键打包（无 Android SDK 路线）
+  setup-tools.sh    首次构建前下载工具链
+  src/              原生源码：Manifest / res / Java
+docs/
+  index.html        GitHub Pages 展示页（由 make-pages.cjs 生成）
+make-review.cjs     生成双设备 UI 走查台
+make-pages.cjs      生成 Pages 展示页
 ```
-
-> 换机器时，`_local/` 用 `android/setup-tools.sh` 与 `npm i` 重建即可；
-> 唯一必须**手工备份**的是 `_local/tools/`（签名密钥 + 口令，见文末）。
 
 ---
 
-## 本地开发
+## 本地构建
 
 ```bash
-# 预览界面（改界面时用，手机+平板并排可交互）
-node make-review.cjs        # 生成 ../_local/ui-review.html，浏览器打开
+# 1) 首次：下载构建工具链（aapt2 / d8 / android.jar / 签名器，约 150MB）
+cd android && bash setup-tools.sh
 
-# 打包 APK
-cd android
-bash setup-tools.sh         # 首次：下载工具链（~153MB）
-bash build.sh               # 出包到 android/out/
+# 2) 打包 APK（产物在 android/out/）
+bash build.sh
 
-# 跑验证
-cd app
-npm --prefix ../../_local/qa i
-NODE_PATH=../../_local/qa/node_modules node qa.cjs
-NODE_PATH=../../_local/qa/node_modules node qa-v5.cjs
+# 3) 跑验证（需要本机有 Chrome）
+cd ../app && npm i playwright-core && node qa.cjs
 
-# 更新 GitHub Pages 展示页
-node make-pages.cjs         # 生成 docs/index.html
+# 4) 重新生成在线演示页
+cd .. && node make-pages.cjs
 ```
 
-> ⚠️ `_local/ui-review.html` 和 `docs/index.html` 都是**内嵌快照**，
-> 改完 `app/index.html` 必须重新生成，否则看到的是旧界面。
+> 构建工具链默认下载到仓库根目录下的 `android/.tools/`（已被 `.gitignore` 忽略），首次 `bash setup-tools.sh` 会自动创建；
+> 也可以用环境变量 `SVGVIEW_TOOLS` 指向已有的工具链目录。
+> 验证脚本的截图与结果默认写到 `app/shots/` 与 `app/`，可用 `SVGVIEW_SHOTS` / `SVGVIEW_OUT` 覆盖。
 
 改界面只需替换 `android/src/assets/index.html`（`build.sh` 会自动从 `app/index.html` 同步），**不需要动 Java**。
+
+> ⚠️ 走查台与 `docs/index.html` 都是**内嵌快照**，改完 `app/index.html` 必须重新生成，否则看到的是旧界面。
 
 ---
 
@@ -129,7 +112,7 @@ node make-pages.cjs         # 生成 docs/index.html
 流程：`aapt2 compile+link → javac --release 11 → d8 → 塞 classes.dex → 签名`
 
 **踩过的坑（改构建脚本前先看）**
-- 传给 aapt2/javac/java 的路径必须 `cygpath -m` 转成 `E:/...`，用 `/e/...` 原生工具会报"找不到文件"
+- 传给 aapt2/javac/java 的路径必须 `cygpath -m` 转成 `盘符:/...` 前向斜杠形式，用 `/e/...` 原生工具会报"找不到文件"
 - javac 必须 `--release 11`，默认高版本字节码 d8 拒绝解析
 - 用 `DocumentsContract` 而非 `DocumentFile`（项目无 androidx）；tree Uri 不能直接当 CREATE_DOCUMENT 的 parent
 - 多点触控手势的锚点必须在手势开始时冻结，不能读被 transform 改过的元素尺寸，否则双指缩放会抖
@@ -163,23 +146,6 @@ node make-pages.cjs         # 生成 docs/index.html
 - 决定何时发布、版本号如何对齐
 
 **说明**：这是一个以实用为目的的小工具项目，不是 AI 能力演示。AI 加速了实现过程，但功能取舍与质量标准由人把关。
-
----
-
-## ⚠️ 签名密钥
-
-签名相关的两个文件都在仓库外，**不在 git 里**，但极其重要：
-
-| 文件 | 说明 |
-|---|---|
-| `_local/tools/svgview.keystore` | 签名私钥，alias `svgview` |
-| `_local/tools/keystore.properties` | 密钥库口令（构建脚本从这里读，不硬编码在仓库里） |
-
-**丢了其中任何一个，都无法给已安装用户推送覆盖更新** —— Android 拒绝用不同密钥签名的同名包覆盖安装，用户只能卸载重装并丢失数据。
-
-请自行备份到安全的地方（网盘 / U 盘）。
-
-> 构建脚本按 `$SVGVIEW_KS_PASS` → `keystore.properties` 的顺序读取口令，都取不到就报错退出。
 
 ---
 
