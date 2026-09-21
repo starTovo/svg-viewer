@@ -8,6 +8,7 @@
 #   _local/tools/bin/aapt2.exe        资源编译与链接
 #   _local/tools/uber-apk-signer.jar  对齐 + 签名
 #   _local/tools/svgview.keystore     自建签名库
+#   _local/tools/keystore.properties  签名口令（不在本文件中，此仓库公开）
 # 工具链不入库（153MB），缺失时运行：bash setup-tools.sh
 #
 # 用法：在 git-bash 中执行  bash build.sh
@@ -39,7 +40,20 @@ SIGNER="$(wp "$TOOLS/uber-apk-signer.jar")"
 
 KS="$(wp "$TOOLS/svgview.keystore")"
 KS_ALIAS="svgview"
-KS_PASS="ROTATED-SEE-_local-tools-keystore.properties"
+
+# Signing credentials are NEVER hardcoded here -- this repo is public.
+# Resolution order: $SVGVIEW_KS_PASS  ->  _local/tools/keystore.properties
+KS_PROPS="$TOOLS/keystore.properties"
+KS_PASS="${SVGVIEW_KS_PASS:-}"
+if [ -z "$KS_PASS" ] && [ -f "$KS_PROPS" ]; then
+  KS_PASS="$(sed -n 's/^storePassword=//p' "$KS_PROPS" | head -1)"
+fi
+if [ -z "$KS_PASS" ]; then
+  printf 'error: keystore password not found.\n' >&2
+  printf '  export SVGVIEW_KS_PASS=<pass>\n' >&2
+  printf '  or create %s containing: storePassword=<pass>\n' "$KS_PROPS" >&2
+  exit 1
+fi
 
 # 沙箱内 %LOCALAPPDATA% / ~/.uber-apk-signer 不可写，统一重定向
 HOME_DIR="$(wp "$ROOT/.home")"

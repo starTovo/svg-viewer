@@ -73,6 +73,20 @@ download "https://repo1.maven.org/maven2/org/robolectric/android-all/14-robolect
 # who already installed the app (Android refuses to overwrite a package signed
 # with a different key). Back it up somewhere safe.
 say "signing keystore"
+# The store password lives in _local/tools/keystore.properties (never in git).
+# If neither that file nor $SVGVIEW_KS_PASS supplies one, generate a random one.
+KS_PROPS="$TOOLS/keystore.properties"
+KS_PASS="${SVGVIEW_KS_PASS:-}"
+if [ -z "$KS_PASS" ] && [ -f "$KS_PROPS" ]; then
+  KS_PASS="$(sed -n 's/^storePassword=//p' "$KS_PROPS" | head -1)"
+fi
+if [ -z "$KS_PASS" ]; then
+  KS_PASS="$(head -c 32 /dev/urandom | base64 | tr -d '/+=' | head -c 28)"
+fi
+if [ ! -f "$KS_PROPS" ]; then
+  printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=svgview\n' "$KS_PASS" "$KS_PASS" > "$KS_PROPS"
+  printf '    wrote signing password -> %s\n' "$KS_PROPS"
+fi
 if [ -s "$TOOLS/svgview.keystore" ]; then
   printf '    skip (already present)\n'
 else
@@ -82,10 +96,11 @@ else
     -keystore "$TOOLS/svgview.keystore" \
     -alias svgview \
     -keyalg RSA -keysize 2048 -validity 10950 \
-    -storepass ROTATED-SEE-_local-tools-keystore.properties -keypass ROTATED-SEE-_local-tools-keystore.properties \
+    -storepass "$KS_PASS" -keypass "$KS_PASS" \
     -dname "CN=SVG Viewer, OU=Dev, O=SVGViewer, L=Unknown, ST=Unknown, C=CN"
-  printf '    created %s (alias=svgview, password in build.sh)\n' "$TOOLS/svgview.keystore"
+  printf '    created %s (alias=svgview)\n' "$TOOLS/svgview.keystore"
   printf '    >> BACK THIS FILE UP. Losing it breaks future in-place updates.\n'
+  printf '    >> Also back up %s.\n' "$KS_PROPS"
 fi
 
 # --------------------------------------------------------------- verify ---
